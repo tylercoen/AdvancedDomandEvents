@@ -7,7 +7,8 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
 const openModal = function (e) {
   e.preventDefault();
   modal.classList.remove('hidden');
@@ -29,22 +30,69 @@ document.addEventListener('keydown', function (e) {
     closeModal();
   }
 });
+//implementing smooth scrolling
 
+// btn scroll
+btnScrollTo.addEventListener('click', function (e) {
+  /*
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords);
+  console.log(e.target.getBoundingClientRect()); //relative to viewport
+  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset);
+  console.log(
+    'height/width viewport',
+    document.documentElement.clientHeight,
+    document.documentElement.clientWidth
+  );*/
+  //scrolling
+  //window.scrollTo(
+  //s1coords.left + window.pageXOffset, //you have to add the pageoffsets or they will be off if you scroll at all before clicking
+  //s1coords.top + window.pageYOffset
+  //); above is one way below is a better way
+  //window.scrollTo({
+  //left: s1coords.left + window.pageXOffset,
+  //top: s1coords.top + window.pageYOffset,
+  //behavior: 'smooth',
+  //}); above is better below is even more modern
+
+  section1.scrollIntoView({ behavior: 'smooth' }); //choose the section to scroll to then set the behavior
+});
+/////////////////////////////////////////////////
+// Page navigation
+//document.querySelectorAll('.nav__link').forEach(function (el) {
+// el.addEventListener('click', function (e) {
+// e.preventDefault(); //ignores html anchors
+//const id = this.getAttribute('href');
+//document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//});
+//});
+// much better to put the event listener on the common parent to take advantage of bubbling and use event delegation/
+
+// 1. add event listener to common parent element
+// 2. determine what element originated the event
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  e.preventDefault(); //ignores html anchors
+  // matching strategy
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});
 ////////// SELECTING, CREATING, and DELETING ELEMENTS////////////
 //Selecting elements
-console.log(document.documentElement);
-console.log(document.head);
-console.log(document.body);
+//console.log(document.documentElement);
+//console.log(document.head);
+//console.log(document.body);
 
 const header = document.querySelector('.header'); //selects first one that matches this
 const allSections = document.querySelectorAll('.section'); //selects all that match
-console.log(allSections);
+//console.log(allSections);
 
 document.getElementById('section--1'); //returns NodeList which doesn't update if changes are made
 const allButtons = document.getElementsByTagName('button');
-console.log(allButtons); //returns HTMLCollection which is live and updated as changes are made
+//console.log(allButtons); //returns HTMLCollection which is live and updated as changes are made
 
-console.log(document.getElementsByClassName('btn')); //returns HTMLCollection
+//console.log(document.getElementsByClassName('btn')); //returns HTMLCollection
 
 //creating and inserting elements
 //.insertAdjacentHTML
@@ -104,31 +152,50 @@ logo.classList.toggle()
 logo.classList.contains()
 //logo.className = 'jonas'//don't use b/c this will overide all existing classes
 */
-//implementing smooth scrolling
 
-const btnScrollTo = document.querySelector('.btn--scroll-to');
-const section1 = document.querySelector('#section--1');
-btnScrollTo.addEventListener('click', function (e) {
-  /*
-  const s1coords = section1.getBoundingClientRect();
-  console.log(s1coords);
-  console.log(e.target.getBoundingClientRect()); //relative to viewport
-  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset);
-  console.log(
-    'height/width viewport',
-    document.documentElement.clientHeight,
-    document.documentElement.clientWidth
-  );*/
-  //scrolling
-  //window.scrollTo(
-  //s1coords.left + window.pageXOffset, //you have to add the pageoffsets or they will be off if you scroll at all before clicking
-  //s1coords.top + window.pageYOffset
-  //); above is one way below is a better way
-  //window.scrollTo({
-  //left: s1coords.left + window.pageXOffset,
-  //top: s1coords.top + window.pageYOffset,
-  //behavior: 'smooth',
-  //}); above is better below is even more modern
+//////// EVENT and EVENT HANDLERS ///////////////
+// MDN Events JavaScript
+/*
+const h1 = document.querySelector('h1');
+const alertH1 = function (e) {
+  alert('addEventListener: Great! You are reading the heading :D');
+  h1.removeEventListener('mouseenter', alertH1); //removes it after the event
+};
+//mouseenter conducts and action when the mouse enters and area
+h1.addEventListener('mouseenter', alertH1);
+//addEventListener is better because you can add multiple functions. If you use onmouseenter again it will override the first.
 
-  section1.scrollIntoView({ behavior: 'smooth' }); //choose the section to scroll to then set the behavior
+//h1.onmouseenter = function (e) {
+//  alert('onmouseenter: Great! You are reading the heading :D');
+// };
+
+//you can also remove an event listener after a certain period of time.
+//setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);*/
+
+/////EVENT PROPAGATION
+/*
+// rgb(255,255,255)
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+const randomColor = () =>
+  `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+//console.log(randomColor());
+document.querySelector('.nav__link').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('LINK', e.target);
+  //e.currentTarget === this
+  // stop propagation
+  //e.stopPropagation();
 });
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('CONTAINER', e.target);
+});
+document.querySelector('.nav').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('NAV', e.target);
+});
+// because of bubling up, clicking nav__link will also change it's parent but clicking in the parent won't change the child.
+*/
+
+////EVENT DELEGATION
