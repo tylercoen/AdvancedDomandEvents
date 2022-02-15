@@ -78,6 +78,24 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
 });
+
+// Tabbed components
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+//instead of adding an eventListener on each tab, do this
+tabsContainer.addEventListener('click', function (e) {
+  const clicked = e.target.closest('.operations__tab');
+  if (!clicked) return; //if nothing is clicked it ends the function
+  //first we have to set all to remove operations__tab--active
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  clicked.classList.add('operations__tab--active');
+  //active content area
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
+});
 ////////// SELECTING, CREATING, and DELETING ELEMENTS////////////
 //Selecting elements
 //console.log(document.documentElement);
@@ -197,5 +215,33 @@ document.querySelector('.nav').addEventListener('click', function (e) {
 });
 // because of bubling up, clicking nav__link will also change it's parent but clicking in the parent won't change the child.
 */
+/*
+///////// DOM TRAVERSING //////////////
+const h1 = document.querySelector('h1');
 
-////EVENT DELEGATION
+// Going downwards: child
+console.log(h1.querySelectorAll('.highlight'));
+//selects all items with the highlight class that are childen of the h1 node
+console.log(h1.childNodes); //returns everything in the child node
+console.log(h1.children); //works for direct children but only returns elements
+h1.firstElementChild.style.color = 'white';
+h1.lastElementChild.style.color = 'orangered';
+
+// Going upwards: parents
+console.log(h1.parentNode);
+console.log(h1.parentElement);
+
+h1.closest('.header').style.background = 'var(--gradient-secondary)'; //finds the closest element with the class header and changes the background color to the CSS variant listed.
+h1.closest('h1').style.background = 'var(--gradient-primary)'; //will return itself.
+
+// Going sideways: siblings
+//you can only select direct siblings
+console.log(h1.previousElementSibling);
+console.log(h1.nextElementSibling);
+console.log(h1.previousSibling);
+console.log(h1.nextSibling);
+console.log(h1.parentElement.children); //returns all h1's siblings
+[...h1.parentElement.children].forEach(function (el) {
+  if (el !== h1) el.style.transform = 'scale(0.5)';
+});
+*/
